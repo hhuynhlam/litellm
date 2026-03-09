@@ -346,6 +346,12 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
 
                 # Extract metadata and use helper functions
                 metadata = item.get("metadata", {}) or {}
+                # Resolve source URI from location field if not present in metadata
+                if not metadata.get("x-amz-bedrock-kb-source-uri"):
+                    location = item.get("location", {}) or {}
+                    source_uri = self._get_uri_from_location(location)
+                    if source_uri:
+                        metadata = {**metadata, "x-amz-bedrock-kb-source-uri": source_uri}
                 file_id = self._get_file_id_from_metadata(metadata)
                 filename = self._get_filename_from_metadata(metadata)
                 attributes = self._get_attributes_from_metadata(metadata)
