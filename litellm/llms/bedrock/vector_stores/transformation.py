@@ -152,7 +152,6 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
             if param == "max_num_results":
                 optional_params["numberOfResults"] = value
             elif param == "filters" and value is not None:
-
                 # map the openai filters to the aws kb filters format
                 # openai filters = {"key": <key>, "value": <value>, "operator": <operator>} OR {"and" | "or": [{"key": <key>, "value": <value>, "operator": <operator>}]}
                 # aws kb filters = {"operator": {"<key>": <value>}} OR {"andAll | orAll": [{"operator": {"<key>": <value>}}]}
@@ -351,7 +350,10 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
                     location = item.get("location", {}) or {}
                     source_uri = self._get_uri_from_location(location)
                     if source_uri:
-                        metadata = {**metadata, "x-amz-bedrock-kb-source-uri": source_uri}
+                        metadata = {
+                            **metadata,
+                            "x-amz-bedrock-kb-source-uri": source_uri,
+                        }
                 file_id = self._get_file_id_from_metadata(metadata)
                 filename = self._get_filename_from_metadata(metadata)
                 attributes = self._get_attributes_from_metadata(metadata)
