@@ -24,4 +24,38 @@ def test_transform_search_request():
     )
 
     assert url.endswith("/kb123/retrieve")
-    assert body["retrievalQuery"].get("text") == "hello" 
+    assert body["retrievalQuery"].get("text") == "hello"
+
+
+def test_get_uri_from_location_s3():
+    config = BedrockVectorStoreConfig()
+    location = {
+        "type": "S3",
+        "s3Location": {"uri": "s3://my-bucket/docs/file.pdf"},
+    }
+    assert config._get_uri_from_location(location) == "s3://my-bucket/docs/file.pdf"
+
+
+def test_get_uri_from_location_web():
+    config = BedrockVectorStoreConfig()
+    location = {
+        "type": "WEB",
+        "webLocation": {"url": "https://example.com/page"},
+    }
+    assert config._get_uri_from_location(location) == "https://example.com/page"
+
+
+def test_get_uri_from_location_confluence():
+    config = BedrockVectorStoreConfig()
+    location = {
+        "type": "CONFLUENCE",
+        "confluenceLocation": {"url": "https://myorg.atlassian.net/wiki/spaces/PROJ/pages/123"},
+    }
+    assert config._get_uri_from_location(location) == "https://myorg.atlassian.net/wiki/spaces/PROJ/pages/123"
+
+
+def test_get_uri_from_location_unknown_returns_none():
+    config = BedrockVectorStoreConfig()
+    assert config._get_uri_from_location({}) is None
+    assert config._get_uri_from_location({"type": "UNKNOWN"}) is None
+    assert config._get_uri_from_location({"type": "S3"}) is None  # missing s3Location

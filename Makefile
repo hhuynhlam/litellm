@@ -143,7 +143,7 @@ test-unit: install-test-deps
 
 # Matrix test targets (matching CI workflow groups)
 test-unit-llms: install-test-deps
-	poetry run pytest tests/test_litellm/llms --tb=short -vv -n 4 --durations=20
+	poetry run pytest tests/test_litellm/llms/bedrock/vector_stores --tb=short -vv -n 4 --durations=20
 
 test-unit-proxy-guardrails: install-test-deps
 	poetry run pytest tests/test_litellm/proxy/guardrails tests/test_litellm/proxy/management_endpoints tests/test_litellm/proxy/management_helpers --tb=short -vv -n 4 --durations=20

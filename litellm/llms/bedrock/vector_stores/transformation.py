@@ -297,6 +297,32 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
         )
         return f"bedrock-kb-document-{data_source_id}"
 
+    def _get_uri_from_location(self, location: Dict[str, Any]) -> Optional[str]:
+        """
+        Extract source URI from Bedrock KB location field.
+
+        Supports all location types from the Bedrock Retrieve API:
+        https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_Retrieve.html
+        """
+        if not location:
+            return None
+        location_type = location.get("type", "").upper()
+        type_map = {
+            "S3": ("s3Location", "uri"),
+            "CONFLUENCE": ("confluenceLocation", "url"),
+            "KENDRA": ("kendraDocumentLocation", "uri"),
+            "SALESFORCE": ("salesforceLocation", "url"),
+            "SHAREPOINT": ("sharePointLocation", "url"),
+            "WEB": ("webLocation", "url"),
+            "CUSTOM": ("customDocumentLocation", "id"),
+        }
+        entry = type_map.get(location_type)
+        if not entry:
+            return None
+        loc_key, uri_key = entry
+        loc_data = location.get(loc_key) or {}
+        return loc_data.get(uri_key) or None
+
     def _get_attributes_from_metadata(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
         """
         Extract all attributes from Bedrock KB metadata.
