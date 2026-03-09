@@ -307,13 +307,13 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
             return None
         location_type = location.get("type", "").upper()
         type_map = {
-            "S3": ("s3Location", "uri"),
             "CONFLUENCE": ("confluenceLocation", "url"),
+            "CUSTOM": ("customDocumentLocation", "id"),
             "KENDRA": ("kendraDocumentLocation", "uri"),
+            "S3": ("s3Location", "uri"),
             "SALESFORCE": ("salesforceLocation", "url"),
             "SHAREPOINT": ("sharePointLocation", "url"),
             "WEB": ("webLocation", "url"),
-            "CUSTOM": ("customDocumentLocation", "id"),
         }
         entry = type_map.get(location_type)
         if not entry:
