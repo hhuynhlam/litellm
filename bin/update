@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [ -z "$TAG" ]; then
+  echo "Error: TAG environment variable is required" >&2
+  echo "Usage: TAG=1.0.0 $0" >&2
+  exit 1
+fi
+
+# Add remote only if it doesn't already exist
+git remote get-url berriai &>/dev/null || git remote add berriai git@github.com:BerriAI/litellm.git
+
+# Fetch and merge the specific tag
+git fetch --no-tags berriai refs/tags/$TAG
+git merge FETCH_HEAD
