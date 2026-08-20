@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+IMAGE_NAME="ghcr.io/hhuynhlam/litellm"
+PLATFORM="linux/amd64"
+
+if [ -z "$VERSION" ]; then
+  echo "Error: VERSION environment variable is required" >&2
+  echo "Usage: VERSION=1.0.0 $0" >&2
+  exit 1
+fi
+
+# Create a new tag and push it to the remote repository
+git tag "$VERSION"
+git push origin "$VERSION"
+
+# Build and push with multiple tags in one operation
+docker buildx build \
+  --platform "$PLATFORM" \
+  --tag "${IMAGE_NAME}:${VERSION}" \
+  --tag "${IMAGE_NAME}:latest" \
+  --push \
+  .
