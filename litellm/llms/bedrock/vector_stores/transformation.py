@@ -288,7 +288,7 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
         data_source_id: Final = metadata.get("x-amz-bedrock-kb-data-source-id", "unknown") if metadata else "unknown"
         return f"bedrock-kb-document-{data_source_id}"
 
-    def _get_uri_from_location(self, location: Dict[str, Any]) -> Optional[str]:
+    def _get_uri_from_location(self, location: dict[str, Any]) -> str | None:
         """
         Extract source URI from Bedrock KB location field.
 
@@ -344,7 +344,7 @@ class BedrockVectorStoreConfig(BaseVectorStoreConfig, BaseAWSLLM):
                 # synthesized key does not leak into attributes.
                 source_uri = metadata.get("x-amz-bedrock-kb-source-uri")
                 if not source_uri:
-                    location = item.get("location", {}) or {}
+                    location = cast("dict[str, Any]", item.get("location") or {})
                     source_uri = self._get_uri_from_location(location)
                 metadata_for_id = {**metadata, "x-amz-bedrock-kb-source-uri": source_uri} if source_uri else metadata
                 file_id = self._get_file_id_from_metadata(metadata_for_id)
